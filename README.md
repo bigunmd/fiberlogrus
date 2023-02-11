@@ -1,4 +1,4 @@
-# Logrus logger middleware
+# Logrus logger middleware [![Mentioned in Awesome Fiber](https://awesome.re/mentioned-badge-flat.svg)](https://github.com/gofiber/awesome-fiber)
 Logger middleware for [Fiber](https://github.com/gofiber/fiber) that logs HTTP request/response details.
 
 
