@@ -71,6 +71,7 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
+	"github.com/mikhail-bigun/fiberlogrus"
 )
 
 func main() {
