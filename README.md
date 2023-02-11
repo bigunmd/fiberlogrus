@@ -1,5 +1,5 @@
 # Logrus logger middleware
-Logger middleware for Fiber that logs HTTP request/response details.
+Logger middleware for [Fiber](https://github.com/gofiber/fiber) that logs HTTP request/response details.
 
 
 Use your configured `logrus` logger instance or global logrus instance to handle logging in a structured way.
