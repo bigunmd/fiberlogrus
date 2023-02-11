@@ -11,5 +11,10 @@ type Config struct {
 // ConfigDefault is the default config
 var ConfigDefault Config = Config{
 	Logger: nil,
-	Tags:   []string{TagMethod},
+	Tags: []string{
+		TagStatus,
+		TagLatency,
+		TagMethod,
+		TagPath,
+	},
 }
