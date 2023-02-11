@@ -5,9 +5,14 @@ Logger middleware for Fiber that logs HTTP request/response details.
 Use your configured `logrus` logger instance or global logrus instance to handle logging in a structured way.
 
 ## Table of Contents
+- [Getting started](#getting-started)
 - [Signatures](#signatures)
 - [Examples](#examples)
 
+## Getting started
+```bash
+$ go get github.com/mikhail-bigun/fiberlogrus
+```
 ## Signatures
 ```go
 func New(config ...Config) fiber.Handler
