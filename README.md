@@ -37,7 +37,12 @@ app.Use(fiberlogrus.New())
 // ConfigDefault is the default config
 var ConfigDefault Config = Config{
 	Logger: nil,
-	Tags:   []string{TagMethod},
+	Tags: []string{
+		TagStatus,
+		TagLatency,
+		TagMethod,
+		TagPath,
+	},
 }
 ```
 ### Use logger instance and configure tags
