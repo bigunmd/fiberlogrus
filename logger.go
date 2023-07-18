@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// getLogrusFields calls FuncTag funcnions on matching keys
+// getLogrusFields calls FuncTag functions on matching keys
 func getLogrusFields(ftm map[string]FuncTag, c *fiber.Ctx, d *data) log.Fields {
 	f := make(log.Fields)
 	for k, ft := range ftm {
@@ -32,7 +32,7 @@ func New(config ...Config) fiber.Handler {
 
 	return func(c *fiber.Ctx) error {
 		d.start = time.Now()
-		c.Next()
+		err := c.Next()
 		d.end = time.Now()
 		switch cfg.Logger {
 		case nil:
@@ -41,6 +41,6 @@ func New(config ...Config) fiber.Handler {
 			cfg.Logger.WithFields(getLogrusFields(ftm, c, d)).Info()
 		}
 
-		return nil
+		return err
 	}
 }
