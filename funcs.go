@@ -59,8 +59,10 @@ var (
 	}
 	FuncTagReqHeaders FuncTag = func(c *fiber.Ctx, d *data) interface{} {
 		reqHeaders := make([]string, 0)
-		for k, v := range c.GetReqHeaders() {
-			reqHeaders = append(reqHeaders, k+"="+v)
+		for k, vs := range c.GetReqHeaders() {
+			for _, v := range vs {
+				reqHeaders = append(reqHeaders, k+"="+v)
+			}
 		}
 		return []byte(strings.Join(reqHeaders, "&"))
 	}

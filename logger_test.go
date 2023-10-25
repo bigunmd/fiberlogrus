@@ -2,6 +2,7 @@ package fiberlogrus
 
 import (
 	"bytes"
+	"fmt"
 	"net/http/httptest"
 	"testing"
 
@@ -26,6 +27,7 @@ func TestLogger(t *testing.T) {
 			Tags: []string{
 				TagMethod,
 				TagStatus,
+				TagReqHeaders,
 				AttachKeyTag(TagLocals, "loc"),
 				AttachKeyTag(TagRespHeader, "custom-header"),
 			},
@@ -36,11 +38,18 @@ func TestLogger(t *testing.T) {
 		c.Locals("loc", "val")
 		return c.SendString("random string")
 	})
-	resp, err := app.Test(httptest.NewRequest(fiber.MethodGet, "/", nil))
+
+	req := httptest.NewRequest(fiber.MethodGet, "/", nil)
+	req.Header.Add("Multi-Header", "value-1")
+	req.Header.Add("Multi-Header", "value-2")
+
+	resp, err := app.Test(req)
 	require.NoError(t, err)
 	require.Equal(t, fiber.StatusOK, resp.StatusCode)
 	require.Contains(t, buf.String(), "method=GET")
 	require.Contains(t, buf.String(), "status=200")
 	require.Contains(t, buf.String(), "respHeader=custom-header-value")
 	require.Contains(t, buf.String(), "locals=val")
+	require.Contains(t, buf.String(), fmt.Sprintf(`reqHeaders="%v"`, []byte("Host=example.com&Multi-Header=value-1&Multi-Header=value-2")))
+
 }
