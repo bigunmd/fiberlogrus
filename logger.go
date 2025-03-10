@@ -1,6 +1,7 @@
 package fiberlogrus
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -32,13 +33,27 @@ func New(config ...Config) fiber.Handler {
 
 	return func(c *fiber.Ctx) error {
 		d.start = time.Now()
+
 		err := c.Next()
+
 		d.end = time.Now()
+		var logEntry *log.Entry
 		switch cfg.Logger {
 		case nil:
-			log.WithFields(getLogrusFields(ftm, c, d)).Info()
+			logEntry = log.WithFields(getLogrusFields(ftm, c, d))
 		default:
-			cfg.Logger.WithFields(getLogrusFields(ftm, c, d)).Info()
+			logEntry = cfg.Logger.WithFields(getLogrusFields(ftm, c, d))
+		}
+
+		if err == nil {
+			logEntry.Info()
+		} else {
+			code := fiber.StatusInternalServerError
+			var e *fiber.Error
+			if errors.As(err, &e) {
+				code = e.Code
+			}
+			logEntry.WithField("status", code).Error(err)
 		}
 
 		return err
