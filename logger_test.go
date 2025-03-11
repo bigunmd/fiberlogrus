@@ -51,5 +51,42 @@ func TestLogger(t *testing.T) {
 	require.Contains(t, buf.String(), "respHeader=custom-header-value")
 	require.Contains(t, buf.String(), "locals=val")
 	require.Contains(t, buf.String(), fmt.Sprintf(`reqHeaders="%v"`, []byte("Host=example.com&Multi-Header=value-1&Multi-Header=value-2")))
+}
 
+func TestLoggerError(t *testing.T) {
+	t.Parallel()
+	app := fiber.New()
+
+	s := ""
+	buf := bytes.NewBufferString(s)
+
+	logger := logrus.New()
+	logger.SetOutput(buf)
+
+	app.Use(New(
+		Config{
+			Logger: logger,
+			Tags: []string{
+				TagMethod,
+				TagStatus,
+				TagReqHeaders,
+				AttachKeyTag(TagLocals, "loc"),
+				AttachKeyTag(TagRespHeader, "custom-header"),
+			},
+		}))
+
+	app.Get("/error", func(c *fiber.Ctx) error {
+		return fiber.NewError(fiber.StatusInternalServerError, "Test error")
+	})
+
+	req := httptest.NewRequest(fiber.MethodGet, "/error", nil)
+	req.Header.Add("Multi-Header", "value-1")
+	req.Header.Add("Multi-Header", "value-2")
+
+	resp, err := app.Test(req)
+	require.NoError(t, err)
+	require.Equal(t, fiber.StatusInternalServerError, resp.StatusCode)
+	require.Contains(t, buf.String(), "method=GET")
+	require.Contains(t, buf.String(), "status=500")
+	//require.Contains(t, buf.String(), `reqHeaders="Host=example.com&Multi-Header=value-1&Multi-Header=value-2"`)
 }
